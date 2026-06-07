@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sanitation Daily</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="icon-button" id="drawerToggle" aria-label="Open menu">=</button>
+      <div class="title-block">
+        <h1 id="screenTitle">Calendar</h1>
+        <span id="screenSubtitle">Phase 1</span>
+      </div>
+      <button class="icon-button" id="todayButton" aria-label="Jump to today">T</button>
+    </header>
+
+    <aside class="drawer" id="drawer" aria-label="Main menu">
+      <div class="drawer-brand">
+        <div class="brand-mark">SD</div>
+        <div>
+          <strong>Sanitation Daily</strong>
+          <span>34 open items</span>
+        </div>
+      </div>
+      <nav class="drawer-nav">
+        <button class="nav-item active" data-screen="calendar">Calendar</button>
+        <button class="nav-item" data-screen="payroll">Payroll Entry</button>
+        <button class="nav-item" data-screen="locations">Locations</button>
+        <button class="nav-item" data-screen="settings">Settings</button>
+        <button class="nav-item" data-screen="rules">Charts / Holidays</button>
+      </nav>
+      <div class="drawer-foot">
+        <span>Phase 1 focus</span>
+        <strong>Calendar, Payroll, Settings, Locations</strong>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <main class="content">
+      <section class="screen active" id="calendarScreen" aria-labelledby="calendarHeading">
+        <div class="calendar-toolbar">
+          <button class="step-button" id="prevMonth" aria-label="Previous month">&lt;</button>
+          <div>
+            <h2 id="calendarHeading">January 2025</h2>
+            <p id="calendarMode">Officer F6, Sundays automatic</p>
+          </div>
+          <button class="step-button" id="nextMonth" aria-label="Next month">&gt;</button>
+        </div>
+        <div class="calendar-legend">
+          <span><i class="swatch holiday"></i>Holiday</span>
+          <span><i class="swatch chart"></i>Chart</span>
+          <span><i class="swatch vacation"></i>Vacation</span>
+          <span><i class="swatch entry"></i>Entry</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <section class="screen" id="payrollScreen" aria-labelledby="payrollHeading">
+        <div class="screen-band">
+          <h2 id="payrollHeading">Payroll Entry</h2>
+          <input type="date" id="entryDate">
+        </div>
+
+        <form id="payrollForm" class="form-stack">
+          <fieldset class="segmented" aria-label="Work status">
+            <label><input type="radio" name="workStatus" value="workedHoliday" checked><span>Worked/Holiday</span></label>
+            <label><input type="radio" name="workStatus" value="workedChart"><span>Worked Chart</span></label>
+            <label><input type="radio" name="workStatus" value="workedVacation"><span>Worked Vacation</span></label>
+          </fieldset>
+
+          <label class="field">
+            <span>Location</span>
+            <select id="entryLocation"></select>
+          </label>
+
+          <label class="field">
+            <span>Function</span>
+            <select id="entryFunction"></select>
+          </label>
+          <div class="status-row" id="functionStatus">No paid rule selected yet.</div>
+
+          <div class="two-col">
+            <label class="field">
+              <span>Shift Start</span>
+              <select id="shiftStart"></select>
+            </label>
+            <label class="field">
+              <span>Shift End</span>
+              <select id="shiftEnd"></select>
+            </label>
+          </div>
+
+          <label class="check-row">
+            <input type="checkbox" id="routeExtension" checked>
+            <span>Route Extension</span>
+          </label>
+
+          <label class="field">
+            <span>Truck Money (In Hours)</span>
+            <select id="truckMoney"></select>
+          </label>
+
+          <div class="two-col">
+            <label class="field">
+              <span>Partner</span>
+              <input id="partner" type="text" placeholder="Partner name">
+            </label>
+            <label class="field">
+              <span>Dump</span>
+              <select id="dumpStatus"></select>
+            </label>
+          </div>
+
+          <div class="number-grid">
+            <label class="field"><span>Comp Gained</span><input id="compGained" inputmode="decimal" type="number" step="0.25" value="0"></label>
+            <label class="field"><span>Comp Used</span><input id="compUsed" inputmode="decimal" type="number" step="0.25" value="0"></label>
+            <label class="field"><span>Holiday Gained</span><input id="holidayGained" inputmode="decimal" type="number" step="0.25" value="0"></label>
+            <label class="field"><span>Holiday Used</span><input id="holidayUsed" inputmode="decimal" type="number" step="0.25" value="0"></label>
+            <label class="field"><span>Gains</span><input id="gains" inputmode="numeric" type="number" step="1" value="0"></label>
+            <label class="field"><span>Losses</span><input id="losses" inputmode="numeric" type="number" step="1" value="0"></label>
+          </div>
+
+          <label class="check-row">
+            <input type="checkbox" id="paidForWork">
+            <span>Paid For Work</span>
+          </label>
+
+          <label class="field">
+            <span>Note</span>
+            <textarea id="note" rows="4" placeholder="Daily notes"></textarea>
+          </label>
+
+          <div class="action-row">
+            <button type="submit" class="primary">Save Entry</button>
+            <button type="button" id="clearEntry" class="secondary">Clear</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="screen" id="locationsScreen" aria-labelledby="locationsHeading">
+        <div class="screen-band">
+          <h2 id="locationsHeading">Locations</h2>
+          <select id="boroughSelect">
+            <option>Manhattan</option>
+            <option>Bronx</option>
+            <option>Brooklyn</option>
+            <option>Queens</option>
+            <option>Staten Island</option>
+          </select>
+        </div>
+        <div class="location-layout">
+          <div class="location-list" id="locationList"></div>
+          <article class="location-detail" id="locationDetail"></article>
+        </div>
+      </section>
+
+      <section class="screen" id="settingsScreen" aria-labelledby="settingsHeading">
+        <div class="screen-band">
+          <h2 id="settingsHeading">Settings</h2>
+          <button class="secondary compact" id="saveSettings">Save</button>
+        </div>
+
+        <div class="settings-grid">
+          <label class="field">
+            <span>Calendar Year</span>
+            <select id="settingYear"></select>
+          </label>
+          <label class="field">
+            <span>Chart Type</span>
+            <select id="chartType">
+              <option value="officer">Officer Chart</option>
+              <option value="sanitation">Sanitation Worker Chart</option>
+              <option value="ab">A-Day / B-Day</option>
+              <option value="saturday">Saturday Chart</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Officer Chart</span>
+            <select id="officerChart"></select>
+          </label>
+          <label class="field">
+            <span>Sanitation Chart</span>
+            <select id="sanitationChart"></select>
+          </label>
+          <label class="field">
+            <span>A/B Chart</span>
+            <select id="abChart">
+              <option value="A">A Day</option>
+              <option value="B">B Day</option>
+            </select>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="saturdayChart">
+            <span>Saturday Chart</span>
+          </label>
+          <label class="field">
+            <span>Home District</span>
+            <select id="homeDistrict"></select>
+          </label>
+          <label class="field">
+            <span>Money Storage</span>
+            <select id="moneyStorage">
+              <option value="both">Hours + Dollars</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="settings-section">
+          <h3>Vacation Batches</h3>
+          <div class="vacation-grid" id="vacationGrid"></div>
+        </section>
+      </section>
+
+      <section class="screen" id="rulesScreen" aria-labelledby="rulesHeading">
+        <div class="screen-band">
+          <h2 id="rulesHeading">Charts / Holidays</h2>
+          <span class="pill">Draft rules</span>
+        </div>
+        <div class="rules-list" id="rulesList"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Quick navigation">
+      <button class="bottom-item active" data-screen="calendar">Calendar</button>
+      <button class="bottom-item" data-screen="payroll">Payroll</button>
+      <button class="bottom-item" data-screen="locations">Locations</button>
+      <button class="bottom-item" data-screen="settings">Settings</button>
+    </nav>
+
+    <div class="modal-scrim" id="vacationPicker" hidden>
+      <section class="vacation-dialog" role="dialog" aria-modal="true" aria-labelledby="vacationPickerTitle">
+        <div class="vacation-dialog-head">
+          <h2 id="vacationPickerTitle">Choose A Vacation Batch</h2>
+          <button class="icon-button" type="button" id="vacationPickerClose" aria-label="Close vacation batch picker">x</button>
+        </div>
+        <div class="vacation-option-list" id="vacationOptionList"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
