@@ -84,7 +84,7 @@ button {
 .title-block span {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.78);
 }
 
@@ -514,7 +514,7 @@ button {
 
 .calendar-toolbar p {
   margin: 3px 0 0;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -523,7 +523,7 @@ button {
   gap: 12px;
   flex-wrap: wrap;
   padding: 10px 2px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -645,7 +645,7 @@ button {
 .weekday {
   padding: 8px 2px;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   background: #f9fafb;
 }
@@ -759,11 +759,11 @@ button {
 
 .officer-code,
 .vacation-code {
-  min-height: 16px;
+  min-height: 18px;
   overflow: hidden;
   color: #565e66;
-  font-size: 10px;
-  line-height: 1;
+  font-size: 12px;
+  line-height: 1.1;
   text-align: center;
 }
 
@@ -782,12 +782,13 @@ button {
 
 .sanitation-code {
   display: block;
-  min-height: 14px;
+  min-height: 18px;
   overflow: hidden;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 12px;
+  line-height: 1.12;
   color: #6d2779;
 }
 
@@ -796,11 +797,12 @@ button {
   width: fit-content;
   max-width: 100%;
   border-radius: 4px;
-  padding: 2px 4px;
+  padding: 3px 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 12px;
+  line-height: 1.12;
   background: rgba(255, 255, 255, 0.68);
 }
 
@@ -1980,7 +1982,7 @@ button {
   .vacation-code,
   .sanitation-code,
   .tag {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .segmented {
