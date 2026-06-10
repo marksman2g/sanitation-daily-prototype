@@ -1370,42 +1370,20 @@ button {
 
 .map-preview {
   position: relative;
+  display: block;
   min-height: 220px;
   margin: 0 12px 4px;
   border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
-  background:
-    linear-gradient(35deg, transparent 0 46%, rgba(255,255,255,0.8) 47% 50%, transparent 51%),
-    linear-gradient(110deg, transparent 0 55%, rgba(255,255,255,0.55) 56% 59%, transparent 60%),
-    linear-gradient(160deg, #c7d7cf, #b7ccd9 48%, #90adc0 49%, #93b9ca);
+  background: #dce3e8;
 }
 
-.map-preview::before {
-  content: "";
-  position: absolute;
-  inset: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  transform: rotate(-11deg);
-}
-
-.map-pin {
-  position: absolute;
-  left: 48%;
-  top: 42%;
-  width: 24px;
-  height: 24px;
-  border-radius: 50% 50% 50% 0;
-  background: #d62828;
-  transform: rotate(-45deg);
-}
-
-.map-pin::after {
-  content: "";
-  position: absolute;
-  inset: 7px;
-  border-radius: 50%;
-  background: #fff;
+.map-preview iframe {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  border: 0;
 }
 
 .settings-section h3 {

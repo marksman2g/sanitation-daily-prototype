@@ -1825,7 +1825,9 @@ function renderLocations() {
 }
 
 function renderLocationDetail(loc) {
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.address)}`;
+  const mapQuery = loc.address || `${loc.name}, ${loc.borough}, New York`;
+  const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=k&z=16&output=embed`;
   els.locationDetail.innerHTML = `
     <div class="detail-title">
       <h3>${escapeHtml(loc.name)}</h3>
@@ -1840,7 +1842,15 @@ function renderLocationDetail(loc) {
       ${loc.phone ? `<a href="tel:${escapeHtml(loc.phone)}">Call</a>` : ""}
       <a href="${mapsUrl}" target="_blank" rel="noopener">Navigate</a>
     </div>
-    <div class="map-preview" aria-label="Map preview"><span class="map-pin"></span></div>
+    <div class="map-preview" aria-label="Live map preview">
+      <iframe
+        title="${escapeHtml(`${loc.name} map`)}"
+        src="${escapeHtml(mapEmbedUrl)}"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen>
+      </iframe>
+    </div>
   `;
 }
 
