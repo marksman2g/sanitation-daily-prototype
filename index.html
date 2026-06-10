@@ -27,7 +27,7 @@
       </div>
       <nav class="drawer-nav">
         <button class="nav-item active" data-screen="calendar"><span class="nav-icon nav-icon-calendar" aria-hidden="true"></span><span>Calendar</span></button>
-        <button class="nav-item" data-screen="payroll"><span class="nav-icon nav-icon-payroll" aria-hidden="true"></span><span>Payroll Entry</span></button>
+        <button class="nav-item" data-screen="payrollCalendar"><span class="nav-icon nav-icon-payroll" aria-hidden="true"></span><span>Payroll Entry</span></button>
         <button class="nav-item" data-screen="eventPlanner"><span class="nav-icon nav-icon-event" aria-hidden="true"></span><span>Event Planner</span></button>
         <button class="nav-item" data-screen="locations"><span class="nav-icon nav-icon-map" aria-hidden="true"></span><span>Locations</span></button>
         <button class="nav-item" data-screen="clinic"><span class="nav-icon nav-icon-clinic" aria-hidden="true"></span><span>Clinic</span></button>
@@ -67,6 +67,19 @@
           <span><i class="swatch entry"></i>Entry</span>
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <section class="screen" id="payrollCalendarScreen" aria-labelledby="payrollCalendarHeading">
+        <div class="payroll-calendar-nav">
+          <button class="step-button" id="payrollPrevMonth" aria-label="Previous payroll month">&lt;</button>
+          <span class="payroll-calendar-date-icon" aria-hidden="true">15</span>
+          <button class="step-button" id="payrollNextMonth" aria-label="Next payroll month">&gt;</button>
+        </div>
+        <div class="payroll-month-band">
+          <h2 id="payrollCalendarHeading">Payroll for January 2026</h2>
+          <p id="payrollCalendarMode" class="visually-hidden">Choose a payroll date</p>
+        </div>
+        <div class="calendar-grid payroll-calendar-grid" id="payrollCalendarGrid"></div>
       </section>
 
       <section class="screen" id="payrollScreen" aria-labelledby="payrollHeading">
@@ -380,7 +393,7 @@
 
     <nav class="bottom-nav" aria-label="Quick navigation">
       <button class="bottom-item active" data-screen="calendar">Calendar</button>
-      <button class="bottom-item" data-screen="payroll">Payroll</button>
+      <button class="bottom-item" data-screen="payrollCalendar">Payroll</button>
       <button class="bottom-item" data-screen="locations">Locations</button>
       <button class="bottom-item" data-screen="settings">Settings</button>
     </nav>

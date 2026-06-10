@@ -1376,6 +1376,8 @@ function cacheElements() {
   [
     "drawerToggle", "drawer", "scrim", "screenTitle", "screenSubtitle", "todayButton",
     "calendarGrid", "calendarHeading", "calendarMode", "prevMonth", "nextMonth",
+    "payrollCalendarGrid", "payrollCalendarHeading", "payrollCalendarMode",
+    "payrollPrevMonth", "payrollNextMonth",
     "entryDate", "entryDateLabel", "payrollForm", "entryLocation", "entryLocationButton",
     "entryLocationDisplay", "entryFunction", "entryFunctionButton", "entryFunctionDisplay",
     "entryFunctionIcons", "functionStatus", "shiftStart", "shiftStartButton",
@@ -1421,12 +1423,14 @@ function bindEvents() {
   });
   els.prevMonth.addEventListener("click", () => changeMonth(-1));
   els.nextMonth.addEventListener("click", () => changeMonth(1));
+  els.payrollPrevMonth.addEventListener("click", () => changeMonth(-1));
+  els.payrollNextMonth.addEventListener("click", () => changeMonth(1));
   els.todayButton.addEventListener("click", () => {
     const today = new Date();
     state.calendarYear = today.getFullYear();
     state.calendarMonth = today.getMonth();
     persist();
-    renderCalendar();
+    renderMonthCalendars();
   });
   els.entryDate.addEventListener("change", () => {
     state.selectedDate = els.entryDate.value;
@@ -1486,7 +1490,7 @@ function applyStateToControls() {
 
 function renderAll() {
   setScreen(state.activeScreen, { quiet: true });
-  renderCalendar();
+  renderMonthCalendars();
   renderLocations();
   renderSettings();
   renderRules();
@@ -1496,6 +1500,7 @@ function renderAll() {
 function setScreen(screen, options = {}) {
   const labels = {
     calendar: ["Calendar", "Charts, holidays, vacation weeks"],
+    payrollCalendar: ["Payroll", "Choose a date"],
     payroll: ["Payroll Entry", formatLongDate(state.selectedDate)],
     eventPlanner: ["Event Planner", "Calendar and events"],
     locations: ["Locations", state.settings.homeDistrict],
@@ -1545,12 +1550,29 @@ function changeMonth(delta) {
   state.calendarYear = date.getFullYear();
   state.calendarMonth = date.getMonth();
   persist();
+  renderMonthCalendars();
+}
+
+function renderMonthCalendars() {
   renderCalendar();
+  renderPayrollCalendar();
 }
 
 function renderCalendar() {
   els.calendarHeading.textContent = `${monthNames[state.calendarMonth]} ${state.calendarYear}`;
   els.calendarMode.textContent = `${chartLabel()} | Sundays automatic`;
+  renderCalendarGrid(els.calendarGrid);
+  bindPayrollDateClicks(els.calendarGrid);
+}
+
+function renderPayrollCalendar() {
+  els.payrollCalendarHeading.textContent = `Payroll for ${monthNames[state.calendarMonth]} ${state.calendarYear}`;
+  els.payrollCalendarMode.textContent = "Choose a date for Payroll Entry";
+  renderPayrollCalendarGrid();
+  bindPayrollDateClicks(els.payrollCalendarGrid);
+}
+
+function renderCalendarGrid(grid) {
   const parts = weekdays.map((day) => `<div class="weekday">${day}</div>`);
   const first = new Date(state.calendarYear, state.calendarMonth, 1);
   const start = new Date(state.calendarYear, state.calendarMonth, 1 - first.getDay());
@@ -1560,15 +1582,60 @@ function renderCalendar() {
     date.setDate(start.getDate() + i);
     parts.push(renderDay(date, vacationDates));
   }
-  els.calendarGrid.innerHTML = parts.join("");
-  els.calendarGrid.querySelectorAll("[data-date]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.selectedDate = button.dataset.date;
-      els.entryDate.value = state.selectedDate;
-      loadEntryIntoForm();
-      setScreen("payroll");
-    });
+  grid.innerHTML = parts.join("");
+}
+
+function bindPayrollDateClicks(grid) {
+  grid.querySelectorAll("[data-date]").forEach((button) => {
+    button.addEventListener("click", () => openPayrollEntryForDate(button.dataset.date));
   });
+}
+
+function openPayrollEntryForDate(dateKey) {
+  state.selectedDate = dateKey;
+  els.entryDate.value = state.selectedDate;
+  loadEntryIntoForm();
+  setScreen("payroll");
+}
+
+function renderPayrollCalendarGrid() {
+  const parts = weekdays.map((day) => `<div class="weekday payroll-weekday">${day}</div>`);
+  const first = new Date(state.calendarYear, state.calendarMonth, 1);
+  const start = new Date(state.calendarYear, state.calendarMonth, 1 - first.getDay());
+  const vacationDates = selectedVacationDateKeys(state.calendarYear);
+  for (let i = 0; i < 42; i += 1) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i);
+    parts.push(renderPayrollDay(date, vacationDates));
+  }
+  els.payrollCalendarGrid.innerHTML = parts.join("");
+}
+
+function renderPayrollDay(date, vacationDates) {
+  const key = toDateKey(date);
+  const isCurrentMonth = date.getMonth() === state.calendarMonth;
+  const isHoliday = Boolean(holidayByDate[key]);
+  const isChart = isChartDay(date, key);
+  const isVacation = vacationDates.has(key);
+  const entry = state.entries[key];
+  const classes = ["payroll-day"];
+  if (!isCurrentMonth) classes.push("muted");
+  if (isHoliday) classes.push("holiday");
+  if (isChart) classes.push("chart");
+  if (isVacation) classes.push("vacation");
+  const dayStyle = isCurrentMonth ? calendarDayBackgroundStyle(isHoliday, isChart, isVacation) : "";
+  const notes = [
+    isHoliday ? "Paid Holiday" : "",
+    holidayByDate[key] || "",
+    isVacation ? "Vacation" : "",
+    entry ? entry.functionName : ""
+  ].filter(Boolean);
+  return `<div class="${classes.join(" ")}"${dayStyle}>
+    <button type="button" data-date="${key}">
+      <span class="payroll-date-number">${date.getDate()}</span>
+      ${notes.slice(0, 3).map((note, index) => `<span class="payroll-calendar-note ${isHoliday && index === 1 ? "holiday-name" : ""}">${escapeHtml(note)}</span>`).join("")}
+    </button>
+  </div>`;
 }
 
 function renderDay(date, vacationDates) {
@@ -1733,7 +1800,7 @@ function savePayrollEntry(event) {
     moneyStorage: "both"
   };
   persist();
-  renderCalendar();
+  renderMonthCalendars();
   setScreen("calendar");
 }
 
@@ -1990,6 +2057,7 @@ function renderVacationPicker() {
       }
       closeVacationPicker();
       renderSettings();
+      renderMonthCalendars();
     });
   });
 }
@@ -2061,7 +2129,7 @@ function saveSettings() {
   });
   state.calendarYear = state.settings.year;
   persist();
-  renderCalendar();
+  renderMonthCalendars();
   renderSettings();
   setScreen("calendar");
 }

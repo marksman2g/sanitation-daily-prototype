@@ -564,11 +564,82 @@ button {
   border-right: 0;
 }
 
+.payroll-calendar-nav {
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 8px 18px;
+  background: var(--accent);
+}
+
+.payroll-calendar-nav .step-button {
+  justify-self: center;
+  color: #fff;
+  background: transparent;
+  font-size: 30px;
+}
+
+.payroll-calendar-date-icon {
+  justify-self: center;
+  position: relative;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.payroll-calendar-date-icon::before,
+.payroll-calendar-date-icon::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  width: 6px;
+  height: 12px;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.payroll-calendar-date-icon::before {
+  left: 9px;
+}
+
+.payroll-calendar-date-icon::after {
+  right: 9px;
+}
+
+.payroll-month-band {
+  display: grid;
+  min-height: 50px;
+  place-items: center;
+  padding: 6px 10px;
+  color: #fff;
+  background: #858585;
+  text-align: center;
+}
+
+.payroll-month-band h2 {
+  margin: 0;
+  font-size: clamp(25px, 7vw, 44px);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
 .weekday,
 .day {
   min-width: 0;
   border-right: 1px solid var(--calendar-sheet-line);
   border-bottom: 1px solid var(--calendar-sheet-line);
+}
+
+.payroll-calendar-grid {
+  border-color: #bcbcbc;
 }
 
 .weekday {
@@ -579,6 +650,14 @@ button {
   background: #f9fafb;
 }
 
+.payroll-weekday {
+  padding: 4px 2px;
+  border-color: #bcbcbc;
+  font-size: clamp(17px, 4vw, 30px);
+  color: #000;
+  background: linear-gradient(#fff, #ededed);
+}
+
 .day {
   display: flex;
   flex-direction: column;
@@ -586,6 +665,61 @@ button {
   min-height: 118px;
   padding: 6px;
   background: var(--calendar-day-bg, #fff);
+}
+
+.payroll-day {
+  min-width: 0;
+  min-height: 135px;
+  border-right: 1px solid #bcbcbc;
+  border-bottom: 1px solid #bcbcbc;
+  background: var(--calendar-day-bg, #fff);
+}
+
+.payroll-day.muted {
+  background: #fff;
+}
+
+.payroll-day button {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 8px 0 8px 2px;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+}
+
+.payroll-date-number {
+  display: block;
+  color: #000;
+  font-size: clamp(34px, 8vw, 54px);
+  line-height: 0.95;
+}
+
+.payroll-day.muted .payroll-date-number {
+  color: #c6c6c6;
+}
+
+.payroll-day.chart .payroll-date-number,
+.payroll-day.holiday .payroll-date-number,
+.payroll-day.vacation .payroll-date-number {
+  color: #061ba8;
+}
+
+.payroll-calendar-note {
+  display: block;
+  max-width: 100%;
+  color: #15239d;
+  overflow-wrap: anywhere;
+  font-size: clamp(14px, 3vw, 24px);
+  line-height: 1.08;
+}
+
+.payroll-calendar-note.holiday-name {
+  color: #7d1010;
 }
 
 .day.muted {
