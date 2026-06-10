@@ -473,6 +473,10 @@ const paidFunctionHints = new Set(functionOptions.filter((name) => {
   return /Collection|Dump|Truck|Refuse|Recycling|Organics|Paper|MPG|Half|Bulk|EZPACK|Roll On|School Truck/.test(name);
 }));
 
+const expandedFunctionHints = new Set(functionOptions.filter((name) => {
+  return /Collection|Half to|Household Refuse|MPG|Organics|Paper|Quarter Truck|Recycling|Three-Quarter Truck/.test(name);
+}));
+
 const truckOptions = [
   ["0", "No Truck"],
   ["1", "Eighth Truck"],
@@ -1322,6 +1326,7 @@ const chartAnalysisYear = 2026;
 
 let state = loadState();
 let activeVacationSlot = "";
+let activeOptionControl = "";
 const els = {};
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1370,14 +1375,18 @@ function cacheElements() {
   [
     "drawerToggle", "drawer", "scrim", "screenTitle", "screenSubtitle", "todayButton",
     "calendarGrid", "calendarHeading", "calendarMode", "prevMonth", "nextMonth",
-    "entryDate", "payrollForm", "entryLocation", "entryFunction", "functionStatus",
-    "shiftStart", "shiftEnd", "routeExtension", "truckMoney", "partner", "dumpStatus",
+    "entryDate", "entryDateLabel", "payrollForm", "entryLocation", "entryLocationButton",
+    "entryLocationDisplay", "entryFunction", "entryFunctionButton", "entryFunctionDisplay",
+    "entryFunctionIcons", "functionStatus", "shiftStart", "shiftStartButton",
+    "shiftStartDisplay", "shiftEnd", "shiftEndButton", "shiftEndDisplay",
+    "routeExtension", "truckMoney", "truckMoneyButton", "truckMoneyDisplay",
+    "partner", "dumpStatus", "dumpStatusButton", "dumpStatusDisplay",
     "compGained", "compUsed", "holidayGained", "holidayUsed", "gains", "losses",
     "paidForWork", "note", "clearEntry", "boroughSelect", "locationList",
     "locationDetail", "settingYear", "chartType", "officerChart", "sanitationChart",
     "abChart", "saturdayChart", "homeDistrict", "moneyStorage", "saveSettings",
     "vacationGrid", "vacationPicker", "vacationPickerClose", "vacationOptionList",
-    "rulesList"
+    "optionPicker", "optionPickerTitle", "optionPickerList", "rulesList"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -1421,14 +1430,29 @@ function bindEvents() {
   els.entryDate.addEventListener("change", () => {
     state.selectedDate = els.entryDate.value;
     loadEntryIntoForm();
+    if (state.activeScreen === "payroll") {
+      els.screenSubtitle.textContent = formatLongDate(state.selectedDate);
+    }
     persist();
   });
   els.shiftStart.addEventListener("change", () => {
     els.shiftEnd.value = addHoursToTime(els.shiftStart.value, 8);
+    syncPayrollDisplays();
   });
-  els.entryFunction.addEventListener("change", renderFunctionStatus);
+  [
+    els.entryLocation,
+    els.entryFunction,
+    els.shiftEnd,
+    els.truckMoney,
+    els.dumpStatus
+  ].forEach((control) => {
+    control.addEventListener("change", syncPayrollDisplays);
+  });
+  document.querySelectorAll("[data-picker-control]").forEach((button) => {
+    button.addEventListener("click", () => openOptionPicker(button.dataset.pickerControl));
+  });
   els.payrollForm.addEventListener("submit", savePayrollEntry);
-  els.clearEntry.addEventListener("click", clearEntry);
+  els.clearEntry.addEventListener("click", cancelPayrollEntry);
   els.boroughSelect.addEventListener("change", renderLocations);
   els.saveSettings.addEventListener("click", saveSettings);
   els.settingYear.addEventListener("change", renderSettings);
@@ -1436,9 +1460,13 @@ function bindEvents() {
   els.vacationPicker.addEventListener("click", (event) => {
     if (event.target === els.vacationPicker) closeVacationPicker();
   });
+  els.optionPicker.addEventListener("click", (event) => {
+    if (event.target === els.optionPicker) closeOptionPicker();
+  });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !els.vacationPicker.hidden) {
-      closeVacationPicker();
+    if (event.key === "Escape") {
+      if (!els.optionPicker.hidden) closeOptionPicker();
+      if (!els.vacationPicker.hidden) closeVacationPicker();
     }
   });
 }
@@ -1468,12 +1496,13 @@ function setScreen(screen, options = {}) {
   state.activeScreen = screen;
   document.querySelectorAll(".screen").forEach((section) => section.classList.remove("active"));
   document.getElementById(`${screen}Screen`).classList.add("active");
+  document.querySelector(".app-shell").classList.toggle("payroll-active", screen === "payroll");
   document.querySelectorAll("[data-screen]").forEach((button) => {
     button.classList.toggle("active", button.dataset.screen === screen);
   });
   const labels = {
     calendar: ["Calendar", "Charts, holidays, vacation weeks"],
-    payroll: ["Payroll Entry", state.selectedDate],
+    payroll: ["Payroll Entry", formatLongDate(state.selectedDate)],
     locations: ["Locations", state.settings.homeDistrict],
     settings: ["Settings", "Profile, charts, vacation"],
     rules: ["Charts / Holidays", "First rules focus"]
@@ -1608,6 +1637,7 @@ function chartLabel() {
 function loadEntryIntoForm() {
   const entry = state.entries[state.selectedDate] || {};
   els.entryDate.value = state.selectedDate;
+  els.entryDateLabel.textContent = formatLongDate(state.selectedDate);
   document.querySelectorAll("input[name='workStatus']").forEach((radio) => {
     radio.checked = radio.value === (entry.workStatus || "workedHoliday");
   });
@@ -1627,7 +1657,7 @@ function loadEntryIntoForm() {
   els.losses.value = entry.losses ?? 0;
   els.paidForWork.checked = Boolean(entry.paidForWork);
   els.note.value = entry.note || "";
-  renderFunctionStatus();
+  syncPayrollDisplays();
 }
 
 function savePayrollEntry(event) {
@@ -1659,11 +1689,9 @@ function savePayrollEntry(event) {
   setScreen("calendar");
 }
 
-function clearEntry() {
-  delete state.entries[state.selectedDate];
-  persist();
+function cancelPayrollEntry() {
   loadEntryIntoForm();
-  renderCalendar();
+  setScreen("calendar");
 }
 
 function renderFunctionStatus() {
@@ -1673,6 +1701,88 @@ function renderFunctionStatus() {
   } else {
     els.functionStatus.textContent = "No paid-function rule assigned yet.";
   }
+}
+
+function syncPayrollDisplays() {
+  els.entryDateLabel.textContent = formatLongDate(els.entryDate.value || state.selectedDate);
+  els.entryLocationDisplay.textContent = formatLocationDisplay(els.entryLocation.value);
+  els.entryFunctionDisplay.textContent = els.entryFunction.value;
+  els.entryFunctionIcons.innerHTML = functionIconHtml(els.entryFunction.value);
+  els.shiftStartDisplay.textContent = els.shiftStart.value;
+  els.shiftEndDisplay.textContent = els.shiftEnd.value;
+  els.truckMoneyDisplay.textContent = formatTruckDisplay(els.truckMoney.value);
+  els.dumpStatusDisplay.textContent = els.dumpStatus.value;
+  renderFunctionStatus();
+}
+
+function openOptionPicker(controlId) {
+  const control = els[controlId];
+  if (!control) return;
+  activeOptionControl = controlId;
+  els.optionPickerTitle.textContent = optionPickerTitle(controlId);
+  const options = Array.from(control.options);
+  els.optionPickerList.innerHTML = options.map((option) => renderOptionButton(controlId, option)).join("");
+  els.optionPickerList.querySelectorAll("[data-option-value]").forEach((button) => {
+    button.addEventListener("click", () => {
+      applyOptionPickerValue(button.dataset.optionValue);
+    });
+  });
+  els.optionPicker.hidden = false;
+  const selected = els.optionPickerList.querySelector(".selected");
+  if (selected) selected.scrollIntoView({ block: "center" });
+}
+
+function closeOptionPicker() {
+  els.optionPicker.hidden = true;
+  activeOptionControl = "";
+}
+
+function applyOptionPickerValue(value) {
+  const control = els[activeOptionControl];
+  if (!control) return;
+  control.value = value;
+  if (activeOptionControl === "shiftStart") {
+    els.shiftEnd.value = addHoursToTime(value, 8);
+  }
+  syncPayrollDisplays();
+  closeOptionPicker();
+}
+
+function optionPickerTitle(controlId) {
+  const titles = {
+    entryLocation: "Location",
+    entryFunction: "Function",
+    shiftStart: "Shift Start",
+    shiftEnd: "Shift End",
+    truckMoney: "Truck Money",
+    dumpStatus: "Dump"
+  };
+  return titles[controlId] || "Choose option";
+}
+
+function renderOptionButton(controlId, option) {
+  const selected = option.selected ? " selected" : "";
+  const value = option.value;
+  const label = option.textContent;
+  let main = label;
+  let sub = "";
+  let side = "";
+  let icons = "";
+  if (controlId === "entryLocation") {
+    const loc = locationByName(value);
+    main = value;
+    sub = loc ? loc.alias : "";
+    side = formatLocationDisplay(value);
+  }
+  if (controlId === "entryFunction") {
+    icons = functionIconHtml(value);
+  }
+  return `
+    <button class="option-button${selected}" type="button" data-option-value="${escapeHtml(value)}">
+      <span class="option-main">${escapeHtml(main)}${sub ? `<span class="option-sub">${escapeHtml(sub)}</span>` : ""}</span>
+      ${icons ? `<span class="option-icons" aria-hidden="true">${icons}</span>` : side ? `<span class="option-side">${escapeHtml(side)}</span>` : `<span></span>`}
+    </button>
+  `;
 }
 
 function renderLocations() {
@@ -2067,6 +2177,45 @@ function addDays(date, days) {
 
 function formatShortDate(date) {
   return `${weekdays[date.getDay()]} ${monthNames[date.getMonth()]} ${date.getDate()}`;
+}
+
+function formatLongDate(value) {
+  const parts = String(value || "").split("-");
+  if (parts.length !== 3) return String(value || "");
+  const year = Number(parts[0]);
+  const month = Number(parts[1]);
+  const day = Number(parts[2]);
+  if (!year || !month || !day) return String(value || "");
+  return `${monthNames[month - 1]} ${day}, ${year}`;
+}
+
+function locationByName(name) {
+  return locations.find((loc) => loc.name === name);
+}
+
+function formatLocationDisplay(name) {
+  const match = /^(Manhattan|Bronx|Brooklyn|Queens|Staten Island) ([0-9]+[A-Z]?)/.exec(name || "");
+  if (!match) return name || "";
+  const prefixes = {
+    Manhattan: "MN",
+    Bronx: "BX",
+    Brooklyn: "BK",
+    Queens: "QN",
+    "Staten Island": "SI"
+  };
+  const district = match[2].replace(/^([0-9])([A-Z]?)$/, "0$1$2");
+  return `${prefixes[match[1]]}${district}`;
+}
+
+function formatTruckDisplay(value) {
+  return value === "0" ? "No Truck" : String(value || "");
+}
+
+function functionIconHtml(name) {
+  const icons = [];
+  if (expandedFunctionHints.has(name)) icons.push(`<span class="menu-icon expand"></span>`);
+  if (paidFunctionHints.has(name)) icons.push(`<span class="menu-icon truck"></span>`);
+  return icons.join("");
 }
 
 function renderRules() {

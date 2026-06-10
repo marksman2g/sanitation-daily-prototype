@@ -59,83 +59,95 @@
       </section>
 
       <section class="screen" id="payrollScreen" aria-labelledby="payrollHeading">
-        <div class="screen-band">
-          <h2 id="payrollHeading">Payroll Entry</h2>
-          <input type="date" id="entryDate">
-        </div>
+        <h2 id="payrollHeading" class="visually-hidden">Payroll Entry</h2>
+        <form id="payrollForm" class="payroll-sheet">
+          <label class="payroll-date-band">
+            <span id="entryDateLabel">January 1, 2026</span>
+            <input type="date" id="entryDate" aria-label="Payroll date">
+          </label>
 
-        <form id="payrollForm" class="form-stack">
-          <fieldset class="segmented" aria-label="Work status">
-            <label><input type="radio" name="workStatus" value="workedHoliday" checked><span>Worked/Holiday</span></label>
-            <label><input type="radio" name="workStatus" value="workedChart"><span>Worked Chart</span></label>
-            <label><input type="radio" name="workStatus" value="workedVacation"><span>Worked Vacation</span></label>
+          <fieldset class="payroll-status-row" aria-label="Work status">
+            <label><input type="radio" name="workStatus" value="workedHoliday" checked><span>Worked/<br>Holiday</span></label>
+            <label><input type="radio" name="workStatus" value="workedChart"><span>Worked<br>Chart</span></label>
+            <label><input type="radio" name="workStatus" value="workedVacation"><span>Worked<br>Vacation</span></label>
           </fieldset>
 
-          <label class="field">
-            <span>Location</span>
-            <select id="entryLocation"></select>
-          </label>
-
-          <label class="field">
-            <span>Function</span>
-            <select id="entryFunction"></select>
-          </label>
-          <div class="status-row" id="functionStatus">No paid rule selected yet.</div>
-
-          <div class="two-col">
-            <label class="field">
-              <span>Shift Start</span>
-              <select id="shiftStart"></select>
-            </label>
-            <label class="field">
-              <span>Shift End</span>
-              <select id="shiftEnd"></select>
-            </label>
+          <div class="payroll-row">
+            <span class="payroll-label">Location</span>
+            <button type="button" class="payroll-value payroll-picker" id="entryLocationButton" data-picker-control="entryLocation">
+              <span id="entryLocationDisplay"></span>
+            </button>
+            <select id="entryLocation" class="select-shadow"></select>
           </div>
 
-          <label class="check-row">
+          <div class="payroll-row payroll-row-boxed">
+            <span class="payroll-label">Function</span>
+            <button type="button" class="payroll-value payroll-picker function-value" id="entryFunctionButton" data-picker-control="entryFunction">
+              <span id="entryFunctionDisplay"></span>
+              <span class="payroll-icons" id="entryFunctionIcons" aria-hidden="true"></span>
+            </button>
+            <select id="entryFunction" class="select-shadow"></select>
+          </div>
+          <div class="status-row" id="functionStatus" hidden>No paid rule selected yet.</div>
+
+          <div class="payroll-row payroll-row-boxed shift-row">
+            <span class="payroll-label">Shift</span>
+            <button type="button" class="payroll-value payroll-picker" id="shiftStartButton" data-picker-control="shiftStart">
+              <span id="shiftStartDisplay"></span>
+            </button>
+            <button type="button" class="payroll-value payroll-picker" id="shiftEndButton" data-picker-control="shiftEnd">
+              <span id="shiftEndDisplay"></span>
+            </button>
+            <select id="shiftStart" class="select-shadow"></select>
+            <select id="shiftEnd" class="select-shadow"></select>
+          </div>
+
+          <label class="payroll-row payroll-check-row">
+            <span class="payroll-label">Route Extension</span>
             <input type="checkbox" id="routeExtension" checked>
-            <span>Route Extension</span>
+            <span class="status-toggle" aria-hidden="true"></span>
           </label>
 
-          <label class="field">
-            <span>Truck Money (In Hours)</span>
-            <select id="truckMoney"></select>
-          </label>
-
-          <div class="two-col">
-            <label class="field">
-              <span>Partner</span>
-              <input id="partner" type="text" placeholder="Partner name">
-            </label>
-            <label class="field">
-              <span>Dump</span>
-              <select id="dumpStatus"></select>
-            </label>
+          <div class="payroll-row">
+            <span class="payroll-label">Truck Money (In Hours)</span>
+            <button type="button" class="payroll-value payroll-picker has-caret" id="truckMoneyButton" data-picker-control="truckMoney">
+              <span id="truckMoneyDisplay"></span>
+            </button>
+            <select id="truckMoney" class="select-shadow"></select>
           </div>
 
-          <div class="number-grid">
-            <label class="field"><span>Comp Gained</span><input id="compGained" inputmode="decimal" type="number" step="0.25" value="0"></label>
-            <label class="field"><span>Comp Used</span><input id="compUsed" inputmode="decimal" type="number" step="0.25" value="0"></label>
-            <label class="field"><span>Holiday Gained</span><input id="holidayGained" inputmode="decimal" type="number" step="0.25" value="0"></label>
-            <label class="field"><span>Holiday Used</span><input id="holidayUsed" inputmode="decimal" type="number" step="0.25" value="0"></label>
-            <label class="field"><span>Gains</span><input id="gains" inputmode="numeric" type="number" step="1" value="0"></label>
-            <label class="field"><span>Losses</span><input id="losses" inputmode="numeric" type="number" step="1" value="0"></label>
+          <div class="payroll-row partner-row">
+            <label class="partner-input-wrap">
+              <span class="payroll-label">Partner</span>
+              <input id="partner" type="text">
+            </label>
+            <button type="button" class="payroll-value payroll-picker dump-picker" id="dumpStatusButton" data-picker-control="dumpStatus">
+              <span id="dumpStatusDisplay"></span>
+            </button>
+            <select id="dumpStatus" class="select-shadow"></select>
           </div>
 
-          <label class="check-row">
+          <label class="payroll-row numeric-row"><span class="payroll-label">Comp Time Gained</span><input id="compGained" inputmode="decimal" type="number" step="0.25" value="0"></label>
+          <label class="payroll-row numeric-row"><span class="payroll-label">Comp Time Used</span><input id="compUsed" inputmode="decimal" type="number" step="0.25" value="0"></label>
+          <label class="payroll-row numeric-row"><span class="payroll-label">Holiday Time Gained</span><input id="holidayGained" inputmode="decimal" type="number" step="0.25" value="0"></label>
+          <label class="payroll-row numeric-row"><span class="payroll-label">Holiday Time Used</span><input id="holidayUsed" inputmode="decimal" type="number" step="0.25" value="0"></label>
+          <label class="payroll-row numeric-row"><span class="payroll-label">Gains</span><input id="gains" inputmode="numeric" type="number" step="1" value="0"></label>
+          <label class="payroll-row numeric-row"><span class="payroll-label">Losses</span><input id="losses" inputmode="numeric" type="number" step="1" value="0"></label>
+
+          <label class="payroll-row payroll-check-row">
+            <span class="payroll-label">Paid For Work</span>
             <input type="checkbox" id="paidForWork">
-            <span>Paid For Work</span>
+            <span class="status-toggle" aria-hidden="true"></span>
           </label>
 
-          <label class="field">
-            <span>Note</span>
-            <textarea id="note" rows="4" placeholder="Daily notes"></textarea>
+          <label class="payroll-note-row">
+            <span class="payroll-label">Note:</span>
+            <textarea id="note" rows="3"></textarea>
           </label>
 
-          <div class="action-row">
-            <button type="submit" class="primary">Save Entry</button>
-            <button type="button" id="clearEntry" class="secondary">Clear</button>
+          <div class="payroll-action-row">
+            <button type="submit" class="secondary">OK</button>
+            <button type="button" id="clearEntry" class="secondary">CANCEL</button>
           </div>
         </form>
       </section>
@@ -237,6 +249,13 @@
           <button class="icon-button" type="button" id="vacationPickerClose" aria-label="Close vacation batch picker">x</button>
         </div>
         <div class="vacation-option-list" id="vacationOptionList"></div>
+      </section>
+    </div>
+
+    <div class="modal-scrim picker-scrim" id="optionPicker" hidden>
+      <section class="option-dialog" role="dialog" aria-modal="true" aria-labelledby="optionPickerTitle">
+        <h2 id="optionPickerTitle" class="visually-hidden">Choose option</h2>
+        <div class="option-list" id="optionPickerList"></div>
       </section>
     </div>
   </div>
