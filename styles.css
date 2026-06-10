@@ -103,11 +103,14 @@ button {
   position: fixed;
   z-index: 40;
   inset: 0 auto 0 0;
+  display: flex;
+  flex-direction: column;
   width: min(330px, 84vw);
   background: #fff;
   transform: translateX(-105%);
   transition: transform 180ms ease;
   box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
 .drawer.open {
@@ -155,14 +158,22 @@ button {
 
 .drawer-nav {
   display: grid;
+  flex: 1 1 auto;
+  gap: 2px;
   padding: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .nav-item {
-  min-height: 48px;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 10px;
+  align-items: center;
+  min-height: 46px;
   border: 0;
   border-radius: 6px;
-  padding: 0 14px;
+  padding: 0 12px;
   text-align: left;
   color: var(--ink);
   background: transparent;
@@ -173,6 +184,289 @@ button {
   background: #f6dbe7;
   color: var(--accent-dark);
   font-weight: 700;
+}
+
+.nav-icon {
+  position: relative;
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  color: #5f6870;
+}
+
+.nav-item.active .nav-icon,
+.nav-item:hover .nav-icon {
+  color: var(--accent-dark);
+}
+
+.nav-icon::before,
+.nav-icon::after {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.nav-icon-calendar::before,
+.nav-icon-event::before {
+  left: 4px;
+  top: 5px;
+  width: 18px;
+  height: 17px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.nav-icon-calendar::after {
+  left: 8px;
+  top: 11px;
+  width: 3px;
+  height: 3px;
+  background: currentColor;
+  box-shadow: 5px 0 0 currentColor, 10px 0 0 currentColor, 0 5px 0 currentColor, 5px 5px 0 currentColor;
+}
+
+.nav-icon-event::after {
+  left: 12px;
+  top: 10px;
+  width: 2px;
+  height: 9px;
+  background: currentColor;
+  box-shadow: 0 0 0 currentColor;
+}
+
+.nav-icon-event {
+  background: linear-gradient(currentColor 0 0) 8px 14px / 10px 2px no-repeat;
+}
+
+.nav-icon-payroll::before,
+.nav-icon-piggy::before,
+.nav-icon-about::before,
+.nav-icon-tutorial::before {
+  display: grid;
+  place-items: center;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.nav-icon-payroll::before {
+  content: "$";
+  right: 3px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+  font-size: 11px;
+}
+
+.nav-icon-payroll::after {
+  left: 3px;
+  bottom: 5px;
+  width: 18px;
+  height: 8px;
+  border-bottom: 3px solid currentColor;
+  border-left: 3px solid currentColor;
+  border-radius: 0 0 0 9px;
+  transform: skewX(-18deg);
+}
+
+.nav-icon-map::before {
+  left: 7px;
+  top: 3px;
+  width: 12px;
+  height: 17px;
+  border: 2px solid currentColor;
+  border-radius: 9px 9px 9px 1px;
+  transform: rotate(45deg);
+}
+
+.nav-icon-map::after {
+  left: 11px;
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.nav-icon-clinic::before {
+  left: 5px;
+  top: 11px;
+  width: 16px;
+  height: 4px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.nav-icon-clinic::after {
+  left: 11px;
+  top: 5px;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.nav-icon-ecb::before {
+  left: 6px;
+  top: 3px;
+  width: 14px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+}
+
+.nav-icon-ecb::after {
+  left: 12px;
+  top: 8px;
+  width: 2px;
+  height: 9px;
+  background: currentColor;
+  box-shadow: 0 11px 0 0 currentColor;
+}
+
+.nav-icon-dump::before {
+  left: 3px;
+  top: 10px;
+  width: 13px;
+  height: 7px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.nav-icon-dump::after {
+  left: 15px;
+  top: 12px;
+  width: 7px;
+  height: 5px;
+  border-radius: 1px 2px 0 0;
+  background: currentColor;
+  box-shadow: -9px 7px 0 -2px currentColor, 2px 7px 0 -2px currentColor;
+}
+
+.nav-icon-hours::before {
+  inset: 4px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.nav-icon-hours::after {
+  left: 13px;
+  top: 8px;
+  width: 6px;
+  height: 7px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+}
+
+.nav-icon-stats::before {
+  left: 6px;
+  bottom: 5px;
+  width: 4px;
+  height: 7px;
+  background: currentColor;
+  box-shadow: 6px -5px 0 currentColor, 12px -10px 0 currentColor;
+}
+
+.nav-icon-stats::after {
+  left: 4px;
+  bottom: 4px;
+  width: 19px;
+  border-bottom: 2px solid currentColor;
+}
+
+.nav-icon-piggy::before {
+  content: "$";
+  left: 5px;
+  top: 5px;
+  width: 16px;
+  height: 16px;
+  font-size: 11px;
+}
+
+.nav-icon-settings::before {
+  inset: 4px;
+  border: 3px dotted currentColor;
+  border-radius: 50%;
+}
+
+.nav-icon-settings::after {
+  inset: 9px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.nav-icon-backup::before {
+  inset: 5px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+}
+
+.nav-icon-backup::after {
+  right: 3px;
+  top: 6px;
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.nav-icon-bell::before {
+  left: 7px;
+  top: 5px;
+  width: 12px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-radius: 8px 8px 4px 4px;
+}
+
+.nav-icon-bell::after {
+  left: 10px;
+  bottom: 3px;
+  width: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.nav-icon-contact::before {
+  left: 4px;
+  top: 7px;
+  width: 18px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+}
+
+.nav-icon-contact::after {
+  left: 6px;
+  top: 9px;
+  width: 14px;
+  height: 9px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg) skew(12deg, 12deg);
+}
+
+.nav-icon-tutorial::before {
+  inset: 4px;
+}
+
+.nav-icon-tutorial::after {
+  left: 11px;
+  top: 9px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid currentColor;
+}
+
+.nav-icon-about::before {
+  content: "i";
+  inset: 4px;
+  font-size: 14px;
 }
 
 .drawer-foot {
@@ -820,6 +1114,31 @@ button {
   display: grid;
   gap: 12px;
   padding: 14px 0;
+}
+
+.module-screen.active {
+  display: grid;
+  gap: 12px;
+}
+
+.module-placeholder {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 14px;
+  background: #fff;
+}
+
+.module-placeholder strong {
+  font-size: 16px;
+}
+
+.module-placeholder span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 .segmented {

@@ -1493,6 +1493,28 @@ function renderAll() {
 }
 
 function setScreen(screen, options = {}) {
+  const labels = {
+    calendar: ["Calendar", "Charts, holidays, vacation weeks"],
+    payroll: ["Payroll Entry", formatLongDate(state.selectedDate)],
+    eventPlanner: ["Event Planner", "Calendar and events"],
+    locations: ["Locations", state.settings.homeDistrict],
+    clinic: ["Clinic", "Clinic info"],
+    ecb: ["ECB Summonses", "Return dates"],
+    whoDumped: ["Who Dumped Last?", "Partner dump history"],
+    hours: ["Hours?", "Out-of-town hours"],
+    stats: ["Stats", "Daily totals"],
+    piggyBank: ["Piggy Bank", "Work in progress"],
+    settings: ["Settings", "Profile, charts, vacation"],
+    backupRestore: ["Backup / Restore", "Storage"],
+    notifications: ["Notifications", "Alerts"],
+    contact: ["Contact Me", "Contact"],
+    tutorial: ["Tutorial", "Guides"],
+    about: ["About", "Sanitation Daily"],
+    rules: ["Charts / Holidays", "First rules focus"]
+  };
+  if (!labels[screen] || !document.getElementById(`${screen}Screen`)) {
+    screen = "calendar";
+  }
   state.activeScreen = screen;
   document.querySelectorAll(".screen").forEach((section) => section.classList.remove("active"));
   document.getElementById(`${screen}Screen`).classList.add("active");
@@ -1500,13 +1522,6 @@ function setScreen(screen, options = {}) {
   document.querySelectorAll("[data-screen]").forEach((button) => {
     button.classList.toggle("active", button.dataset.screen === screen);
   });
-  const labels = {
-    calendar: ["Calendar", "Charts, holidays, vacation weeks"],
-    payroll: ["Payroll Entry", formatLongDate(state.selectedDate)],
-    locations: ["Locations", state.settings.homeDistrict],
-    settings: ["Settings", "Profile, charts, vacation"],
-    rules: ["Charts / Holidays", "First rules focus"]
-  };
   els.screenTitle.textContent = labels[screen][0];
   els.screenSubtitle.textContent = labels[screen][1];
   closeDrawer();
