@@ -691,27 +691,37 @@ button {
   color: #777;
 }
 
+.menu-icon.truck {
+  width: 20px;
+  color: #178f4b;
+}
+
 .menu-icon.truck::before {
   content: "";
   position: absolute;
-  left: 2px;
-  top: 7px;
-  width: 10px;
-  height: 6px;
-  border-radius: 1px;
-  background: currentColor;
+  left: 3px;
+  top: 3px;
+  width: 14px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 3px 3px 2px 2px;
+  background:
+    linear-gradient(currentColor 0 0) 3px 3px / 3px 3px no-repeat,
+    linear-gradient(currentColor 0 0) 8px 3px / 3px 3px no-repeat,
+    linear-gradient(currentColor 0 0) 3px 8px / 8px 2px no-repeat,
+    #e7f6ed;
 }
 
 .menu-icon.truck::after {
   content: "";
   position: absolute;
-  right: 1px;
-  top: 9px;
-  width: 5px;
-  height: 4px;
-  border-radius: 1px 1px 0 0;
+  left: 5px;
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
   background: currentColor;
-  box-shadow: -10px 5px 0 -3px currentColor, -2px 5px 0 -3px currentColor;
+  box-shadow: 7px 0 0 currentColor;
 }
 
 .menu-icon.expand::before,
