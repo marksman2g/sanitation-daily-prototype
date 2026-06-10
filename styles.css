@@ -540,18 +540,15 @@ button {
   border-radius: 3px;
 }
 
-.swatch.holiday,
-.day.holiday {
+.swatch.holiday {
   background: var(--pink);
 }
 
-.swatch.chart,
-.day.chart {
+.swatch.chart {
   background: var(--blue);
 }
 
-.swatch.vacation,
-.day.vacation {
+.swatch.vacation {
   background: var(--green);
 }
 
@@ -588,7 +585,7 @@ button {
   gap: 3px;
   min-height: 118px;
   padding: 6px;
-  background: #fff;
+  background: var(--calendar-day-bg, #fff);
 }
 
 .day.muted {

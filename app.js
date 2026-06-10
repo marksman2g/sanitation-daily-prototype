@@ -1341,6 +1341,7 @@ function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     const next = merge(defaultState, saved || {});
+    next.activeScreen = "calendar";
     if (!saved || saved.dataVersion !== defaultState.dataVersion) {
       next.dataVersion = defaultState.dataVersion;
       next.calendarYear = 2026;
@@ -1553,10 +1554,11 @@ function renderCalendar() {
   const parts = weekdays.map((day) => `<div class="weekday">${day}</div>`);
   const first = new Date(state.calendarYear, state.calendarMonth, 1);
   const start = new Date(state.calendarYear, state.calendarMonth, 1 - first.getDay());
+  const vacationDates = selectedVacationDateKeys(state.calendarYear);
   for (let i = 0; i < 42; i += 1) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
-    parts.push(renderDay(date));
+    parts.push(renderDay(date, vacationDates));
   }
   els.calendarGrid.innerHTML = parts.join("");
   els.calendarGrid.querySelectorAll("[data-date]").forEach((button) => {
@@ -1569,29 +1571,31 @@ function renderCalendar() {
   });
 }
 
-function renderDay(date) {
+function renderDay(date, vacationDates) {
   const key = toDateKey(date);
   const isCurrentMonth = date.getMonth() === state.calendarMonth;
   const isHoliday = Boolean(holidayByDate[key]);
   const isChart = isChartDay(date, key);
   const isAutomaticSunday = date.getDay() === 0;
   const sheet = sheetParts(date, key);
-  const isVacation = Boolean(sheet.vacation);
+  const isVacation = vacationDates.has(key);
   const entry = state.entries[key];
   const classes = ["day"];
   if (!isCurrentMonth) classes.push("muted");
   if (isHoliday) classes.push("holiday");
   if (isChart) classes.push("chart");
   if (isVacation) classes.push("vacation");
+  const dayStyle = isCurrentMonth ? calendarDayBackgroundStyle(isHoliday, isChart, isVacation) : "";
   const notes = [
     entry ? entry.functionName : "",
     holidayByDate[key],
     isChart ? "Your chart" : "",
+    isVacation ? "Vacation" : "",
     isAutomaticSunday ? "Auto off" : "",
     sheet.ab ? `A/B ${sheet.ab}` : "",
     ...(sampleCalendarNotes[key] || [])
   ].filter(Boolean);
-  return `<div class="${classes.join(" ")}">
+  return `<div class="${classes.join(" ")}"${dayStyle}>
     <button type="button" data-date="${key}">
       <span class="date-row">
         <span class="officer-code">${escapeHtml(sheet.officer)}</span>
@@ -1602,6 +1606,35 @@ function renderDay(date) {
     </button>
     ${notes.slice(0, 4).map((note) => `<span class="tag ${entry && note === entry.functionName ? "entry" : ""}">${escapeHtml(note)}</span>`).join("")}
   </div>`;
+}
+
+function selectedVacationDateKeys(year) {
+  const keys = new Set();
+  const options = buildVacationBatchOptions(year);
+  const optionByCode = Object.fromEntries(options.map((option) => [option.code, option]));
+  Object.values(state.settings.vacationBatches || {}).forEach((value) => {
+    const code = normalizeVacationBatchValue(value, options);
+    const option = optionByCode[code];
+    if (!option) return;
+    option.days.forEach((date) => keys.add(toUtcDateKey(date)));
+  });
+  return keys;
+}
+
+function calendarDayBackgroundStyle(isHoliday, isChart, isVacation) {
+  const segments = [];
+  if (isHoliday) segments.push("var(--pink)");
+  if (isChart) segments.push("var(--blue)");
+  if (isVacation) segments.push("var(--green)");
+  if (!segments.length) return "";
+  if (segments.length === 1) return ` style="--calendar-day-bg: ${segments[0]}"`;
+  const step = 100 / segments.length;
+  const stops = segments.map((color, index) => {
+    const start = Number((index * step).toFixed(4));
+    const end = Number(((index + 1) * step).toFixed(4));
+    return `${color} ${start}% ${end}%`;
+  });
+  return ` style="--calendar-day-bg: linear-gradient(to bottom, ${stops.join(", ")})"`;
 }
 
 function isChartDay(date, key) {
