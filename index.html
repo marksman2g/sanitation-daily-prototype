@@ -54,9 +54,15 @@
       <section class="screen active" id="calendarScreen" aria-labelledby="calendarHeading">
         <div class="calendar-toolbar">
           <button class="step-button" id="prevMonth" aria-label="Previous month">&lt;</button>
-          <div>
+          <div class="calendar-toolbar-main">
             <h2 id="calendarHeading">January 2025</h2>
             <p id="calendarMode">Officer F6, Sundays automatic</p>
+            <button type="button" class="font-size-button" id="calendarFontButton" data-picker-control="calendarFontSize" aria-label="Change calendar font size">
+              <span class="font-size-icon" aria-hidden="true">Aa</span>
+              <span>Font</span>
+              <strong id="calendarFontDisplay">Normal</strong>
+            </button>
+            <select id="calendarFontSize" class="select-shadow"></select>
           </div>
           <button class="step-button" id="nextMonth" aria-label="Next month">&gt;</button>
         </div>
@@ -66,7 +72,9 @@
           <span><i class="swatch vacation"></i>Vacation</span>
           <span><i class="swatch entry"></i>Entry</span>
         </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-scroll">
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
       </section>
 
       <section class="screen" id="payrollCalendarScreen" aria-labelledby="payrollCalendarHeading">

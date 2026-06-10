@@ -7,6 +7,17 @@ const monthNames = [
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+const calendarFontOptions = [
+  ["tiny", "Tiny"],
+  ["small", "Small"],
+  ["normal", "Normal"],
+  ["big", "Big"],
+  ["large", "Large"],
+  ["extraLarge", "Extra Large"]
+];
+
+const calendarFontLabels = Object.fromEntries(calendarFontOptions);
+
 const defaultState = {
   dataVersion: 2,
   activeScreen: "calendar",
@@ -23,6 +34,7 @@ const defaultState = {
     saturdayChart: false,
     homeDistrict: "Manhattan 6",
     moneyStorage: "both",
+    calendarFontSize: "normal",
     vacationBatches: {
       v1: "",
       v2: "",
@@ -1375,7 +1387,8 @@ function persist() {
 function cacheElements() {
   [
     "drawerToggle", "drawer", "scrim", "screenTitle", "screenSubtitle", "todayButton",
-    "calendarGrid", "calendarHeading", "calendarMode", "prevMonth", "nextMonth",
+    "calendarScreen", "calendarGrid", "calendarHeading", "calendarMode", "calendarFontSize",
+    "calendarFontButton", "calendarFontDisplay", "prevMonth", "nextMonth",
     "payrollCalendarGrid", "payrollCalendarHeading", "payrollCalendarMode",
     "payrollPrevMonth", "payrollNextMonth",
     "entryDate", "entryDateLabel", "payrollForm", "entryLocation", "entryLocationButton",
@@ -1401,6 +1414,7 @@ function populateStaticControls() {
   fillSelect(els.entryFunction, functionOptions.map((name) => [name, name]));
   fillSelect(els.truckMoney, truckOptions);
   fillSelect(els.dumpStatus, dumpOptions.map((name) => [name, name]));
+  fillSelect(els.calendarFontSize, calendarFontOptions);
   fillSelect(els.shiftStart, timeOptions());
   fillSelect(els.shiftEnd, timeOptions());
   fillSelect(els.settingYear, Array.from({ length: 15 }, (_, i) => {
@@ -1459,6 +1473,7 @@ function bindEvents() {
   els.payrollForm.addEventListener("submit", savePayrollEntry);
   els.clearEntry.addEventListener("click", cancelPayrollEntry);
   els.boroughSelect.addEventListener("change", renderLocations);
+  els.calendarFontSize.addEventListener("change", () => setCalendarFontSize(els.calendarFontSize.value));
   els.saveSettings.addEventListener("click", saveSettings);
   els.settingYear.addEventListener("change", renderSettings);
   els.vacationPickerClose.addEventListener("click", closeVacationPicker);
@@ -1486,6 +1501,8 @@ function applyStateToControls() {
   els.saturdayChart.checked = state.settings.saturdayChart;
   els.homeDistrict.value = state.settings.homeDistrict;
   els.moneyStorage.value = state.settings.moneyStorage;
+  els.calendarFontSize.value = normalizeCalendarFontSize(state.settings.calendarFontSize);
+  applyCalendarFontSize();
 }
 
 function renderAll() {
@@ -1856,6 +1873,11 @@ function applyOptionPickerValue(value) {
   const control = els[activeOptionControl];
   if (!control) return;
   control.value = value;
+  if (activeOptionControl === "calendarFontSize") {
+    setCalendarFontSize(value);
+    closeOptionPicker();
+    return;
+  }
   if (activeOptionControl === "shiftStart") {
     els.shiftEnd.value = addHoursToTime(value, 8);
   }
@@ -1870,9 +1892,30 @@ function optionPickerTitle(controlId) {
     shiftStart: "Shift Start",
     shiftEnd: "Shift End",
     truckMoney: "Truck Money",
-    dumpStatus: "Dump"
+    dumpStatus: "Dump",
+    calendarFontSize: "Calendar Font"
   };
   return titles[controlId] || "Choose option";
+}
+
+function normalizeCalendarFontSize(value) {
+  return calendarFontLabels[value] ? value : "normal";
+}
+
+function setCalendarFontSize(value) {
+  state.settings.calendarFontSize = normalizeCalendarFontSize(value);
+  els.calendarFontSize.value = state.settings.calendarFontSize;
+  applyCalendarFontSize();
+  persist();
+}
+
+function applyCalendarFontSize() {
+  const value = normalizeCalendarFontSize(state.settings.calendarFontSize);
+  const label = calendarFontLabels[value];
+  state.settings.calendarFontSize = value;
+  els.calendarScreen.dataset.calendarFont = value;
+  els.calendarFontDisplay.textContent = label;
+  els.calendarFontButton.setAttribute("aria-label", `Change calendar font size. Current size: ${label}`);
 }
 
 function renderOptionButton(controlId, option) {
