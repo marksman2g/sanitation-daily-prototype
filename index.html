@@ -204,67 +204,52 @@
       <section class="screen module-screen" id="eventPlannerScreen" aria-labelledby="eventPlannerHeading">
         <div class="screen-band">
           <h2 id="eventPlannerHeading">Event Planner</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source shell</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Calendar and Event Entry</strong>
-          <span>Source-backed shell saved for the Event Planner module.</span>
+        <div class="reference-panel">
+          <div class="reference-title">Event Planner</div>
+          <div class="reference-card-list" id="eventPlannerList"></div>
         </div>
       </section>
 
       <section class="screen module-screen" id="clinicScreen" aria-labelledby="clinicHeading">
         <div class="screen-band">
           <h2 id="clinicHeading">Clinic</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Clinic Info</strong>
-          <span>Topic list and phone-number detail structure are tracked for build-out.</span>
-        </div>
+        <div id="clinicContent"></div>
       </section>
 
       <section class="screen module-screen" id="ecbScreen" aria-labelledby="ecbHeading">
         <div class="screen-band">
           <h2 id="ecbHeading">ECB Summonses</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Return Dates</strong>
-          <span>Date and borough menus are tracked as unresolved data.</span>
-        </div>
+        <div id="ecbContent"></div>
       </section>
 
       <section class="screen module-screen" id="whoDumpedScreen" aria-labelledby="whoDumpedHeading">
         <div class="screen-band">
           <h2 id="whoDumpedHeading">Who Dumped Last?</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Partner Dump History</strong>
-          <span>Rotation logic is saved for a later rule pass.</span>
-        </div>
+        <div id="whoDumpedContent"></div>
       </section>
 
       <section class="screen module-screen" id="hoursScreen" aria-labelledby="hoursHeading">
         <div class="screen-band">
           <h2 id="hoursHeading">Hours?</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Rule pending</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Out-of-Town Hours</strong>
-          <span>District comparison rules are still on the unresolved list.</span>
-        </div>
+        <div id="hoursContent"></div>
       </section>
 
       <section class="screen module-screen" id="statsScreen" aria-labelledby="statsHeading">
         <div class="screen-band">
           <h2 id="statsHeading">Stats</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Draft</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Daily Totals</strong>
-          <span>Metrics will connect to payroll entries once rules are confirmed.</span>
-        </div>
+        <div id="statsContent"></div>
       </section>
 
       <section class="screen module-screen" id="piggyBankScreen" aria-labelledby="piggyBankHeading">
@@ -272,10 +257,7 @@
           <h2 id="piggyBankHeading">Piggy Bank</h2>
           <span class="pill">WIP</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Definition Needed</strong>
-          <span>Purpose, inputs, calculations, and outputs remain unresolved.</span>
-        </div>
+        <div id="piggyBankContent"></div>
       </section>
 
       <section class="screen" id="settingsScreen" aria-labelledby="settingsHeading">
@@ -338,56 +320,41 @@
       <section class="screen module-screen" id="backupRestoreScreen" aria-labelledby="backupRestoreHeading">
         <div class="screen-band">
           <h2 id="backupRestoreHeading">Backup / Restore</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Backup and Restore</strong>
-          <span>Storage target, file format, and conflict behavior are still open.</span>
-        </div>
+        <div id="backupRestoreContent"></div>
       </section>
 
       <section class="screen module-screen" id="notificationsScreen" aria-labelledby="notificationsHeading">
         <div class="screen-band">
           <h2 id="notificationsHeading">Notifications</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Alerts</strong>
-          <span>Notification content and timing are tracked for later definition.</span>
-        </div>
+        <div id="notificationsContent"></div>
       </section>
 
       <section class="screen module-screen" id="contactScreen" aria-labelledby="contactHeading">
         <div class="screen-band">
           <h2 id="contactHeading">Contact Me</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Content needed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Contact</strong>
-          <span>Contact details will be added when final content is available.</span>
-        </div>
+        <div id="contactContent"></div>
       </section>
 
       <section class="screen module-screen" id="tutorialScreen" aria-labelledby="tutorialHeading">
         <div class="screen-band">
           <h2 id="tutorialHeading">Tutorial</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Tutorials</strong>
-          <span>Reference tutorial entries are reserved for this screen.</span>
-        </div>
+        <div id="tutorialContent"></div>
       </section>
 
       <section class="screen module-screen" id="aboutScreen" aria-labelledby="aboutHeading">
         <div class="screen-band">
           <h2 id="aboutHeading">About</h2>
-          <span class="pill">Queued</span>
+          <span class="pill">Source-backed</span>
         </div>
-        <div class="module-placeholder">
-          <strong>Sanitation Daily</strong>
-          <span>About content is tracked as a later content pass.</span>
-        </div>
+        <div id="aboutContent"></div>
       </section>
 
       <section class="screen" id="rulesScreen" aria-labelledby="rulesHeading">
