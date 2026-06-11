@@ -1939,6 +1939,21 @@ function hasSheetToken(line, token) {
   return line.split("-").filter(Boolean).includes(String(token));
 }
 
+function dateFromKey(key) {
+  const [year, month, day] = String(key || "").split("-").map(Number);
+  if (!year || !month || !day) return new Date();
+  return new Date(year, month - 1, day);
+}
+
+function defaultWorkStatusForDate(key) {
+  const date = dateFromKey(key);
+  const year = date.getFullYear();
+  if (holidayByDate[key]) return "workedHoliday";
+  if (isChartDay(date, key)) return "workedChart";
+  if (selectedVacationDateKeys(year).has(key)) return "workedVacation";
+  return "regularDay";
+}
+
 function chartLabel() {
   if (state.settings.chartType === "officer") return `Officer F${state.settings.officerChart}`;
   if (state.settings.chartType === "sanitation") return `Sanitation ${state.settings.sanitationChart}`;
@@ -1948,10 +1963,11 @@ function chartLabel() {
 
 function loadEntryIntoForm() {
   const entry = state.entries[state.selectedDate] || {};
+  const workStatus = entry.workStatus || defaultWorkStatusForDate(state.selectedDate);
   els.entryDate.value = state.selectedDate;
   els.entryDateLabel.textContent = formatLongDate(state.selectedDate);
   document.querySelectorAll("input[name='workStatus']").forEach((radio) => {
-    radio.checked = radio.value === (entry.workStatus || "workedHoliday");
+    radio.checked = radio.value === workStatus;
   });
   els.entryLocation.value = entry.location || state.settings.homeDistrict;
   els.entryFunction.value = entry.functionName || "Collection+1 Dump";
